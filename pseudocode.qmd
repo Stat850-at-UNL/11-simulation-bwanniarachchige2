@@ -97,7 +97,7 @@ function playAgain():
 Create a flowchart illustrating how the game unfolds, using the function names provided in the ChatGPT code. 
 Include this as a PNG file in the repository and link to it here.
 
-<!-- Your image should go here. Use markdown syntax to add the image and give it a useful caption -->
+![Craps Game Flowchart](flowchart.png)
 
 ## Single game data structure {#sec-single-game-data}
 
@@ -108,15 +108,31 @@ Draw/sketch a tabular data structure that can store the results as you progress 
 What additional columns do you need? 
 Hint: Each roll of the 2 dice should be a row.
 
-<!-- Here you should include either a picture of your sketch or a markdown table -->
+Each row represents the results of a single game of Craps.
+
+| **Column Name**    | **Data Type** | **Description**                                      |
+|--------------------|---------------|------------------------------------------------------|
+| **GameID**         | Integer       | Unique identifier for the game instance              |
+| **ComeOutRoll**    | Integer       | First roll of the game (come-out roll)               |
+| **Result**         | String        | Outcome of the game (e.g., "Win" or "Lose")          |
+| **Point**          | Integer       | The point value set during the game (if applicable)  |
+| **TotalRolls**     | Integer       | Total number of rolls made during the game           |
+| **WinningRoll**    | Integer       | Roll that led to winning, if applicable              |
+| **LosingRoll**     | Integer       | Roll that led to losing, if applicable               |
+| **EndRollSequence**| String        | Sequence of rolls leading to the game’s conclusion   |
+| **PlayDuration**   | Float         | Duration of the game in seconds (optional)           |
+| **PlayAgain**      | Boolean       | Indicator if the player chose to play another round  |
+
 
 ## Summary data structure {#sec-game-summary-data}
 
 Draw/sketch a summary tabular data structure to store summary information from a single game of craps.    
 Hint: Each game of craps should yield a single row in your table.
 
-<!-- Here you should include either a picture of your sketch or a markdown table -->
-
+| GameID | ComeOutRoll | Result | Point | TotalRolls | WinningRoll | LosingRoll | EndRollSequence | PlayDuration | PlayAgain |
+|--------|-------------|--------|-------|------------|-------------|------------|-----------------|--------------|-----------|
+| 1      | 7           | Win    | -     | 1          | 7           | -          | "7"             | 5.3          | True      |
+| 2      | 8           | Lose   | 8     | 4          | -           | 7          | "8, 5, 6, 7"    | 12.1         | False     | 
 
 # Simulating a game of craps {#sec-simulation-pseudocode}
 
@@ -162,13 +178,39 @@ roll_dice <- function() {
 
 Put each function in a separate code block.
 
+```{r}
+roll_dice <- function() {
+  # Input: None
+  # Output: an integer between 2 and 12
+  # Description: Simulates a roll of two six-sided dice, returning the sum
+}
+```
+
+```{r}
+is_come_out_roll <- function(roll) {
+  # Input: roll - an integer between 2 and 12
+  # Output: Boolean (TRUE if the roll is a come-out roll; FALSE otherwise)
+  # Description: Checks if the roll is a come-out roll (either win, loss, or sets a point)
+}
+```
+
+```{r}
+determine_come_out_outcome <- function(roll) {
+  # Input: roll - an integer between 2 and 12
+  # Output: Character ("win", "loss", or "continue")
+  # Description: Determines the outcome of the come-out roll
+}
+```
+
+
+
 ## Planning Main Functions {#sec-main-function-diagram}
 
 Update your flowchart from @sec-flowchart to match the requirements of this section. 
 Your flowchart should have separate blocks for each function. 
 Which helper function(s) will be called inside each required function?
 
-<!-- Include a picture here using markdown image format. Save the picture in your repository and remember to commit it! -->
+![Detailed Craps Game Simulation Flowchart](flowchart3.png)
 
 ## Simulating a full game {#sec-game-pseudocode}
 
@@ -182,6 +224,15 @@ simulate_craps_game <- function() {
   # Description:
 }
 ```
+```{r}
+simulate_craps_game <- function() {
+  # Input: None
+  # Output: Data frame containing columns: id, roll, outcome
+  # Description: Simulates a single game of Craps, returning a data frame 
+  #              that tracks each roll, its total, and the game outcome
+}
+```
+
 
 ## Summarizing a game {#sec-game-summary-pseudocode}
 
@@ -194,9 +245,16 @@ summarize_craps_game <- function() {
   # Description:
 }
 ```
+```{r}
+summarize_craps_game <- function(game_data) {
+  # Input: game_data - Data frame from simulate_craps_game
+  # Output: Data frame with summary columns: n_rolls, outcome, point
+  # Description: Summarizes a single game’s data, returning a single-row data frame
+}
+```
+
 
 ## Simulating many games {#sec-game-simulation-pseudocode}
-
 
 ```
 run_craps_simulation <- function(N) {
@@ -205,10 +263,35 @@ run_craps_simulation <- function(N) {
   # Description:
 }
 ```
+```{r}
+run_craps_simulation <- function(N) {
+  # Input: N - Integer specifying the number of games to simulate
+  # Output: Data frame with summary information for each game
+  # Description: Runs N games of Craps, summarizing each game and compiling results
+}
+```
+
 
 ## Planning for implementation
 
 What parts are still missing for you to write code implementing craps based on your pseudocode? 
+
+* Inside the function, I need to define loops to continue the process.
+
+* I need to connect all the functions to get the output. 
+
+* I need to use 'rbind()' funtion to get a dataframe as an output.
+
 What do you expect you will need to do before/during the coding process?
+
+* It am planning to type each funtion in seperate chunks and to run each one seperately to make sure there's no any debugging.
+
 Make a plan for next week's work. Where will you start?
 
+* I will start by constructing the helper functions first.
+
+## References
+
+For the flow chart : 
+
+[Helpful flowchart](https://www.crashwhite.com/introcompsci/materials/presentations/grfx/craps_flowchart.graffle.pdf)
