@@ -18,11 +18,9 @@ Make sure this document compiles before you submit your answers.
 
 ```{r}
 roll_dice <- function() {
-  # Input: None
-  # Output: an integer from 1:12
-  # Description: Generate 2 random integers from 1 to 6 and sum them
-  
-  sample(1:6, 2, replace = T) %>% sum()
+  die1 <- sample(1:6, 1)
+  die2 <- sample(1:6, 1)
+  return(die1 + die2)
 }
 ```
 
@@ -30,16 +28,72 @@ roll_dice <- function() {
 roll_dice()
 ```
 
+## `is_come_out_roll`
 
+```{r}
+is_come_out_roll <- function(roll) {
+  return(roll %in% c(2, 3, 7, 11, 12))
+}
+```
+
+```{r}
+is_come_out_roll(7)
+```
+
+## `determine_come_out_outcome`
+
+```{r}
+determine_come_out_outcome <- function(roll) {
+  if (roll %in% c(7, 11)) {
+    return("win")
+  } else if (roll %in% c(2, 3, 12)) {
+    return("loss")
+  } else {
+    return("continue")
+  }
+}
+```
+
+```{r}
+determine_come_out_outcome(1)
+```
 
 # Main Functions
 
 ## `simulate_craps_game`
+
 ```{r}
 simulate_craps_game <- function() {
-  # Input: 
-  # Output: 
-  # Description:
+  rolls <- data.frame(id = integer(), roll = integer(), outcome = character(), stringsAsFactors = FALSE)
+  
+  roll_count <- 1
+  roll <- roll_dice()
+  
+  # Check the come-out roll
+  outcome <- determine_come_out_outcome(roll)
+  rolls <- rbind(rolls, data.frame(id = roll_count, roll = roll, outcome = outcome))
+  
+  # Continue if point is set
+  if (outcome == "continue") {
+    point <- roll
+    repeat {
+      roll_count <- roll_count + 1
+      roll <- roll_dice()
+      if (roll == point) {
+        outcome <- "win"
+        rolls <- rbind(rolls, data.frame(id = roll_count, roll = roll, outcome = outcome))
+        break
+      } else if (roll == 7) {
+        outcome <- "loss"
+        rolls <- rbind(rolls, data.frame(id = roll_count, roll = roll, outcome = outcome))
+        break
+      } else {
+        rolls <- rbind(rolls, data.frame(id = roll_count, roll = roll, outcome = "continue"))
+      }
+    }
+  }
+  
+  return(rolls)
 }
 ```
 
@@ -48,11 +102,18 @@ simulate_craps_game()
 ```
 
 ## `summarize_craps_game`
-```{r}
-summarize_craps_game <- function() {
-  # Input: 
-  # Output: 
-  # Description:
+
+```{r, message=FALSE}
+library(dplyr)
+
+summarize_craps_game <- function(game_data) {
+  n_rolls <- nrow(game_data)
+  outcome <- tail(game_data$outcome, 1)
+  first_roll <- game_data$roll[1]
+  
+  point <- ifelse(first_roll %in% c(4, 5, 6, 8, 9, 10), first_roll, NA)
+  
+  return(data.frame(n_rolls = n_rolls, outcome = outcome, point = point))
 }
 ```
 
@@ -61,16 +122,25 @@ simulate_craps_game() %>% summarize_craps_game()
 ```
 
 ## `run_craps_simulation`
+
 ```{r}
 run_craps_simulation <- function(N) {
-  # Input: an integer N which determines the number of games to simulate
-  # Output: 
-  # Description:
+  simulations <- data.frame(n_rolls = integer(), outcome = character(), point = integer(), stringsAsFactors = FALSE)
+  
+  for (i in 1:N) {
+    game_data <- simulate_craps_game()
+    summary <- summarize_craps_game(game_data)
+    simulations <- rbind(simulations, summary)
+  }
+  
+  return(simulations)
 }
 ```
 
 ```{r}
-result <- run_craps_simulation(N=5) # demonstrate result
+result <- run_craps_simulation(N=5)
 result
 ```
+## References:
 
+[Here's a helpful video demonstrating how to simulate the game of Craps in R:](https://www.youtube.com/embed/BXRfDShFwXo)
