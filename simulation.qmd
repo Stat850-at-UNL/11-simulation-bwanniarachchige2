@@ -1,0 +1,88 @@
+---
+title: "Craps Simulation"
+format: html
+---
+
+```{r echo=FALSE,warning=FALSE, message=FALSE}
+
+#setting up:
+library(tidyverse)
+source("play-craps.R")
+
+```
+
+
+## `The probability of winning a game of craps in exactly 3 rolls`
+
+```{r}
+# Run a large number of simulations
+set.seed(123)  # For reproducibility
+num_simulations <- 1000
+simulation_results <- run_craps_simulation(num_simulations)
+
+# Calculate the probability of winning in exactly 3 rolls
+win_in_3_rolls <- simulation_results %>%
+  filter(outcome == "win" & n_rolls == 3) %>%
+  nrow()
+
+probability_win_3_rolls <- win_in_3_rolls / num_simulations
+
+cat("Probability of winning in exactly 3 rolls:", round(probability_win_3_rolls, 4))
+```
+
+
+## `The probability of winning a craps game with initial points 6 or 8`
+
+```{r}
+set.seed(456)  # seed
+num_simulations <- 100
+simulation_results <- run_craps_simulation(num_simulations)
+
+# Analyze games with initial point of 6 or 8
+point_6_8_games <- simulation_results %>%
+  filter(point %in% c(6, 8))
+
+# Calculate probabilities for point 6 or 8
+point_6_8_analysis <- point_6_8_games %>%
+  group_by(point) %>%
+  summarize(
+    total_games = n(),
+    wins = sum(outcome == "win"),
+    win_probability = wins / total_games,
+    avg_rolls = mean(n_rolls)
+  )
+
+print(point_6_8_analysis)
+```
+## `Comparative analysis`
+
+```{r}
+# Comparative analysis with other points
+point_analysis <- simulation_results %>%
+  filter(point %in% c(4, 5, 6, 8, 9, 10)) %>%
+  group_by(point) %>%
+  summarize(
+    total_games = n(),
+    wins = sum(outcome == "win"),
+    win_probability = wins / total_games,
+    avg_rolls = mean(n_rolls)
+  ) %>%
+  arrange(desc(win_probability))
+
+print(point_analysis)
+```
+
+```{r}
+# Visualize the win probabilities
+library(ggplot2)
+
+ggplot(point_analysis, aes(x = factor(point), y = win_probability, fill = factor(point))) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Win Probability by Initial Point in Craps",
+    x = "Initial Point",
+    y = "Win Probability",
+    fill = "Points"
+  ) +
+  theme_minimal()
+```
