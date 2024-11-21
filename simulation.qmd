@@ -72,6 +72,12 @@ point_analysis <- simulation_results %>%
 print(point_analysis)
 ```
 
+* The most common points set were 5 (16 times) and 6 (14 times).
+
+* Point 8 has the highest win probability at 66.7% (4 wins out of 6 games).
+
+* Games with point 6 lasted the longest on average, with 5.86 rolls.
+
 ```{r}
 # Visualize the win probabilities
 library(ggplot2)
@@ -86,3 +92,11 @@ ggplot(point_analysis, aes(x = factor(point), y = win_probability, fill = factor
   ) +
   theme_minimal()
 ```
+
+* The number of games for each point varies significantly (from 6 to 16). 
+
+* In this simulation, setting a point of 8 appeared to be most advantageous, with the highest win rate.However, the small sample size (only 6 games) means this could be due to chance.
+
+* Point 4 seems to be the most challenging to win, with the lowest win probability of 18.2%.
+
+* Interestingly, there doesn't seem to be a clear correlation between the average number of rolls and the win probability. For example, point 6 has the highest average rolls but a relatively low win probability.
